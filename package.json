@@ -1,0 +1,21 @@
+{
+  "name": "cusco-drive",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.3.7",
+    "antd": "^4.10.2",
+    "framer-motion": "^3.2.1",
+    "graphql": "^15.4.0",
+    "graphql-tag": "^2.11.0",
+    "next": "10.0.5",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "styled-components": "^5.2.1"
+  }
+}

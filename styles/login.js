@@ -21,8 +21,11 @@ export const LoginCard = styled.div`
     max-width: 400px;
     width: 100%;
     margin: auto;
-    top: 35vh;
+    top: ${props=>props.top ? props.top : "35vh"};
     position: relative;
     color: white;
+    [title] {
+     color: white !important;
+}
     
 `

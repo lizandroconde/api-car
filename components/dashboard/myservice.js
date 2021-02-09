@@ -204,19 +204,19 @@ const MyService = () => {
   );
 };
 
-const ComentaryList = styled(List)`
+export const ComentaryList = styled(List)`
   padding-left: 2rem;
 `;
-const Time = styled.div`
+export const Time = styled.div`
   position: absolute;
   left: 0;
   top: -15px;
   font-size: 0.7rem;
 `;
-const Cont = styled.div`
+export const Cont = styled.div`
   color: black;
 `;
-const ContentR = styled.div`
+export const ContentR = styled.div`
   position: relative;
 `;
 

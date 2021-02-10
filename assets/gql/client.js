@@ -26,8 +26,8 @@ export const VERIFI_CLIENT = gql`
 `
 
 export const NEW_CLIENT = gql`
-    mutation createNewClient($name: String,$username: String,$password: String){
-        crearCliente(input:{correo:$username,nombre:$name,contrasenia:$password})
+    mutation createNewClient($name: String,$surname: String,$username: String,$password: String){
+        crearCliente(input:{correo:$username,nombre:$name,contrasenia:$password,apellidos: $surname})
     }
 `
 

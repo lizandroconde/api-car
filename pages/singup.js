@@ -122,6 +122,20 @@ const SingUp = () => {
               </Form.Item>
 
               <Form.Item
+                name="surname"
+                label="Apellidos"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por Favor ingrese sus Apellidos!"
+                  }
+                ]}
+                hasFeedback
+              >
+                <Input   size="large"   />
+              </Form.Item>
+
+              <Form.Item
                 name="password"
                 label="Contraseña"
                 rules={[

@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
+import Headers from "../../components/header";
 
 
 
@@ -76,6 +77,7 @@ const router = useRouter();
     if(error == false && loading == false){
         return(
             <>
+            <Headers user={}/>
             {props.children}
             </>
           

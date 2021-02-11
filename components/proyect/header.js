@@ -1,21 +1,16 @@
-
-import { Container } from "../container";
-import { Menu } from "antd";
+import { Menu } from "antd"
+import { Container } from "../container"
 import {
-  MailOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
-  SendOutlined
-} from "@ant-design/icons";
-import { useRouter } from "next/router";
-const { SubMenu } = Menu;
+    MailOutlined,
+    AppstoreOutlined,
+    SettingOutlined,
+    SendOutlined
+  } from "@ant-design/icons";
+import SubMenu from "antd/lib/menu/SubMenu";
 
-const HeaderDashboard = () => {
-  const router = useRouter();
-  return (
-    <>
-    
-      <Menu
+const HeaderP = () =>{
+    return(
+        <Menu
         mode="horizontal"
         theme="dark"
       >
@@ -25,9 +20,7 @@ const HeaderDashboard = () => {
         theme="dark"
         
       >
-        <Menu.Item key="dash" onClick={()=>{
-          router.push("/dashboard")
-        }} icon={<AppstoreOutlined />}>
+        <Menu.Item key="dash"  icon={<AppstoreOutlined />}>
          Dashboard
         </Menu.Item>
         <Menu.Item key="newtravel" onClick={()=>{
@@ -52,10 +45,7 @@ const HeaderDashboard = () => {
             <Menu.Item key="setting:4">Option 4</Menu.Item>
           </Menu.ItemGroup>
         </SubMenu>
-        <Menu.Item key="alipay" onClick={()=>{
-          sessionStorage.removeItem('auth')
-          router.push("/login");
-        }}>
+        <Menu.Item key="alipay">
           
             Cerrar Session
           
@@ -63,9 +53,7 @@ const HeaderDashboard = () => {
         </Menu>
         </Container>
       </Menu>
-    </>
-  );
-};
+    )
+}
 
-export default HeaderDashboard;
-
+export default HeaderP

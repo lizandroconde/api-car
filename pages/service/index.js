@@ -14,6 +14,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import relativeTime from "dayjs/plugin/relativeTime";
+import HeaderP from "../../components/proyect/header";
 
 const Service = ({ id }) => {
   const [datas, SetData] = useState();
@@ -94,7 +95,7 @@ const Service = ({ id }) => {
   if (datas) {
     return (
       <TemplateAuth>
-        <HeaderDashboard />
+       <HeaderP /> 
         <Container>
           <Layout style={{ padding: "20px 0" }}>
             <Content style={{ padding: "0 20px" }}>

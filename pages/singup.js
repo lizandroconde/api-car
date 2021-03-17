@@ -30,8 +30,10 @@ const formItemLayout = {
 
 const SingUp = () => {
   const router = useRouter();
-  const [newClient] = useMutation(NEW_CLIENT);
   const [getVerifi] = useMutation(VERIFI_CLIENT);
+
+
+  const [newClient] = useMutation(NEW_CLIENT);
   const onFinish = async (values) => {
      
     try {

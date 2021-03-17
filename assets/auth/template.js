@@ -1,5 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
+import styled from "styled-components";
+import Loading from "../../components/box/loading";
+import { Container } from "../../components/container";
 import Headers from "../../components/header";
 
 
@@ -9,6 +12,7 @@ const router = useRouter();
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(false);
    const [auth, setAuth] = useState(true);
+   const [user, setUser] = useState();
 
     useEffect(() => {
         let token = JSON.parse(sessionStorage.getItem('auth'));
@@ -25,7 +29,10 @@ const router = useRouter();
                             iv: "${token.token.iv}",
                             content: "${token.token.content}"
                         }
-                        ) 
+                        ){
+                            status
+                            user
+                        }
                     }
                     `
                 })
@@ -36,7 +43,8 @@ const router = useRouter();
             try {
                 if(data.data){
                     let {AutenticateC} = data.data
-                    if(AutenticateC){
+                    if(AutenticateC.status){
+                        setUser(AutenticateC.user)
                         setLoading(false)
                     }else{
                         setAuth(false)
@@ -64,7 +72,7 @@ const router = useRouter();
       
     if(loading){
         return(
-            <h1>Loadding</h1>
+          <Loading />
         )
     }
 
@@ -76,10 +84,15 @@ const router = useRouter();
 
     if(error == false && loading == false){
         return(
-            <>
-            <Headers user={}/>
+            <Main>
+            <Headers user={user} />
             {props.children}
-            </>
+            <FDevelopers>
+                <Container>
+                Desarrollado por Grupo <strong>Nexttime</strong>
+                </Container>
+            </FDevelopers>
+            </Main>
           
       )
     }
@@ -89,3 +102,18 @@ const router = useRouter();
 
 
 export default TemplateAuth
+
+const Main = styled.div`
+    position: relative;
+    height: 100%;
+`
+
+const FDevelopers = styled.div`
+    position: sticky;
+    background:#001529;
+    bottom: 0;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    color: white;
+`

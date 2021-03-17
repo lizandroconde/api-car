@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TemplateAuth from "../assets/auth/template";
 import { Container } from "../components/container";
 import HeaderDashboard from "../components/dashboard/header";
-import { InputNumber } from 'antd';
+import { InputNumber,Radio  } from 'antd';
 
 import { NewServiceBox, MainServiceBox } from "../styles/newservice";
 import {
@@ -23,16 +23,18 @@ import TextArea from "antd/lib/input/TextArea";
 import Map from '../components/Maps/first'
 import { useMutation } from "@apollo/client";
 import { CREATE_SERVICE } from '../assets/gql/service'
+import { useRouter } from "next/router";
 const { Option } = Select;
+
 
 const options = [
   {
-    value: "abarth",
-    label: "Abarth",
+    value: "toyoya",
+    label: "Toyota",
     children: [
       {
-        value: "500C",
-        label: "500C",
+        value: "4Runner",
+        label: "4Runner",
         children: [
           {
             label: "4 Asientos",
@@ -41,8 +43,8 @@ const options = [
         ]
       },
       {
-        label: "500",
-        value: "500",
+        label: "86",
+        value: "86",
         children: [
             {
               label: "4 Asientos",
@@ -51,8 +53,8 @@ const options = [
           ]
       },
       {
-        label: "124 Spider",
-        value: "124 spider",
+        label: "Agya",
+        value: "agya",
         children: [
             {
               label: "4 Asientos",
@@ -93,6 +95,8 @@ const tailFormItemLayout = {
 };
 
 const newService = () => {
+  
+  const router = useRouter();
   const [form] = Form.useForm();
   const [createService] = useMutation(CREATE_SERVICE);
   const onFinish = async (values) => {
@@ -104,7 +108,7 @@ const newService = () => {
         "content":tk.token.content 
     }
       ndata.cliente  = newtk
-    console.log(newtk)
+   
       let descripcion ={
           "anio":parseInt(marca.anio),
           "detalles": marca.detalles,
@@ -125,17 +129,16 @@ const newService = () => {
         "direccion":ndata.hasta
       }
      ndata.descripcion = descripcion;
-     ndata.desde = desde;
-     ndata.hasta = hasta;
-     
+     ndata.empieza = desde;
+     ndata.termina = hasta;
      console.log(ndata)
      try {
         const { data } = await createService({ variables: ndata });
-       console.log(data)
+        message.success("Su viaje ah sido publicado correctamente");
+        router.push("/dashboard");
          
       } catch (error) {
         message.error("Ohhps ocurrio un error, vuelve a intentarlo mas tarde");
-        console.log(error);
       } 
   };
 
@@ -143,7 +146,6 @@ const newService = () => {
 
 
   const checkPrice = (_, value) => {
-    console.log(value);
     if (value > 0 && value < 9999) {
       return Promise.resolve();
     }
@@ -152,7 +154,6 @@ const newService = () => {
 
   return (
     <TemplateAuth>
-      <HeaderDashboard />
       <NewServiceBox>
         <Container>
           <MainServiceBox>
@@ -200,6 +201,18 @@ const newService = () => {
                 hasFeedback
               >
                 <Input size="large" />
+              </Form.Item>
+                
+              <Form.Item
+                  name="servicio"
+                  label="Servicio"
+                  
+              >
+                <Radio.Group  value={"ida"}>
+                  <Radio value="ida">Solo Ida</Radio>
+                  <Radio value="idayvuelta">Ida & Vuelta</Radio>
+                   
+                </Radio.Group>
               </Form.Item>
 
               <Form.Item
@@ -266,7 +279,7 @@ const newService = () => {
             
               <Form.Item {...tailFormItemLayout}>
                 <Button type="primary" htmlType="submit">
-                  Register
+                  Publicar
                 </Button>
               </Form.Item>
             </Form>

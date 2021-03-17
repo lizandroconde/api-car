@@ -7,15 +7,17 @@ import { SettingOutlined, UserOutlined, LogoutOutlined} from '@ant-design/icons'
 import { useRouter } from "next/router";
 import { ButtonLongin } from "../../styles/login";
 
-const Headers = () =>{
+
+
+const Headers = ({user}) =>{
     const router = useRouter();
     const menu = (
         <Menu >
-          <Menu.Item key="1" icon={<UserOutlined />}>
+          <Menu.Item key="1" onClick={()=>{ router.push("/setting/perfil")}} icon={<UserOutlined />}>
             Ver Perfil
           </Menu.Item>
           <Menu.Item key="2" icon={<SettingOutlined />}>
-            Ajustes del Usuario
+            Ajustes
           </Menu.Item>
           <Menu.Item key="3" onClick={()=>{
           sessionStorage.removeItem('auth')
@@ -31,7 +33,12 @@ const Headers = () =>{
         <Header>
         <Container>
           <HeaderD>
-            <div>Logo</div>
+            <div>
+              <ImgLogo src="/logo.png"  />
+              <Button onClick={()=>{
+                router.push("/dashboard")
+                }} >Mis Viajes</Button>
+            </div>
             <HeaderDD>
              <ButtonLongin size="middle" onClick={()=>{
                 router.push("/new-service")
@@ -43,7 +50,7 @@ const Headers = () =>{
                 <Perfil >
                     <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" size="large" />
                     <Name >
-                        @Lizandroconde
+                        @{user}
                     </Name>
                 </Perfil>
                 </Dropdown>
@@ -82,4 +89,11 @@ cursor: pointer;
 
 const Name = styled.div`
     font-weight: bold;
+`
+
+const ImgLogo = styled.img`
+  height: 60px;
+  object-fit: contain;
+  width: 120px;
+
 `

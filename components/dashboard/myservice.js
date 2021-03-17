@@ -1,4 +1,4 @@
-import { List, Avatar, Skeleton, Space, Divider } from "antd";
+import { List, Avatar, Skeleton, Space, Divider, message } from "antd";
 import React, { useEffect, useState } from "react";
 import Link from 'next/link'
 import {
@@ -10,6 +10,9 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import relativeTime from "dayjs/plugin/relativeTime";
 import styled from "styled-components";
+import { NewComponet, TitleComponent } from "../../styles/general";
+import { POST_DELETE_SUBASTA } from "../../assets/gql/service";
+import { useMutation } from "@apollo/client";
 const datafake = [{}];
 
 const IconText = ({ icon, text, background }) => (
@@ -21,6 +24,7 @@ const IconText = ({ icon, text, background }) => (
       borderRadius: "5px",
       cursor: "pointer"
     }}
+    on
   >
     {React.createElement(icon)}
     {text}
@@ -32,6 +36,8 @@ const MyService = () => {
   const [loading, Setloading] = useState(true);
   dayjs.extend(relativeTime);
   const date = dayjs();
+
+
 
   useEffect(() => {
     let token = JSON.parse(sessionStorage.getItem("auth"));
@@ -60,6 +66,7 @@ const MyService = () => {
                       titulo
                       precio
                       subasta{
+                        _id
                         comentario
                         precio
                         fecha
@@ -95,6 +102,29 @@ const MyService = () => {
     })();
   }, []);
 
+  //#Eliminar el div qie 
+
+  //#Function Delte Subasta 
+  const [deleteSubasta] = useMutation(POST_DELETE_SUBASTA);
+  const DeleteSubasta = async (notificacion, subasta) =>{
+    try {
+      const { data } = await deleteSubasta({ variables: {notificacion,subasta} });
+      if (data) {
+        let { DeleteSubasta } = data;
+
+        if (DeleteSubasta === true) {
+          
+        } else {
+          message.success("Se elimino Correctamente");
+        }
+      }
+    } catch (error) {
+      message.error("Ohhps ocurrio un error");
+      console.log(error);
+    }
+ 
+  }
+
   if (loading) {
     return (
       <List
@@ -113,6 +143,9 @@ const MyService = () => {
     );
   }
   return (
+    <NewComponet>
+    <TitleComponent>Tus Viajes</TitleComponent>
+    
     <List
       itemLayout="vertical"
       dataSource={data}
@@ -148,19 +181,24 @@ const MyService = () => {
               dataSource={item.subasta}
               renderItem={(subasta) => (
                 <List.Item
+                  key={subasta._id}
                   actions={[
-                    <IconText
+                    <div>
+                    <IconText 
                       icon={FileAddOutlined}
                       background={"green"}
                       text="Asignar"
                       key="list-vertical-star-o "
-                    />,
-                    <IconText
+                    />
+                     </div>,
+                    <div onClick={()=>{DeleteSubasta(item._id,subasta._id)}}>
+                      <IconText
                       icon={DeleteOutlined}
                       background={"red"}
                       text="Eliminar"
                       key="list-vertical-like-o"
-                    />,
+                    />
+                    </div>,
                     <IconText
                       icon={MessageOutlined}
                       background={"yellowgreen"}
@@ -201,11 +239,13 @@ const MyService = () => {
       )}
       f
     />
+    </NewComponet>
   );
 };
 
 export const ComentaryList = styled(List)`
   padding-left: 2rem;
+  background: white;
 `;
 export const Time = styled.div`
   position: absolute;
@@ -218,6 +258,9 @@ export const Cont = styled.div`
 `;
 export const ContentR = styled.div`
   position: relative;
+  
 `;
+
+
 
 export default MyService;

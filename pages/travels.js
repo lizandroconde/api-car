@@ -7,9 +7,11 @@ import TemplateAuth from "../assets/auth/template";
 import { Container } from "../components/container";
 import HeaderDashboard from "../components/dashboard/header";
 import MyService from "../components/dashboard/myservice";
-import Perfil from "../components/dashboard/perfil";
+import Travel from "../components/travels/travel";
+
 
 const Dashboard = () => {
+    
   return (
     <TemplateAuth>
       <HeaderDashboard />
@@ -18,12 +20,13 @@ const Dashboard = () => {
            
           style={{ padding: "24px 0"}}
         >
+             <Sider width={400} style={{background:"#f0f2f5"}} >
+               SideBar
+            </Sider>
           <Content style={{ padding: "0 24px"}}>
-            <MyService />
+          <Travel />
           </Content>
-          <Sider width={400} style={{background:"#f0f2f5"}} >
-            <Perfil />
-          </Sider>
+          
         </Layout>
       </Container>
     </TemplateAuth>

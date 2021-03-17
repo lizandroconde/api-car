@@ -7,7 +7,7 @@ import TemplateAuth from "../../assets/auth/template";
 import { Container } from "../../components/container";
 import HeaderDashboard from "../../components/dashboard/header";
 import { Cont, ContentR, Time } from "../../components/dashboard/myservice";
-import { Comment, Tooltip, List } from "antd";
+import { Comment, Modal, List, Button, Form, Input, Checkbox, InputNumber, message } from "antd";
 import { Tag } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -15,13 +15,45 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import relativeTime from "dayjs/plugin/relativeTime";
 import HeaderP from "../../components/proyect/header";
+import { useMutation } from "@apollo/client";
+import { POST_SUBASTA } from "../../assets/gql/service";
 
 const Service = ({ id }) => {
   const [datas, SetData] = useState();
   const [loading, Setloading] = useState(true);
+  const [modal, setModal] = useState(false);
   dayjs.extend(relativeTime);
   const date = dayjs();
 
+  const [postSubasta] = useMutation(POST_SUBASTA);
+  const onFinish = async (values) =>{
+    let token = JSON.parse(sessionStorage.getItem("auth"));
+    let usuario = {
+      "iv":token.token.iv,
+      "content":token.token.content 
+  }
+    try {
+      const { data } = await postSubasta({ variables:{notificacion: id,input:values,usuario }});
+      if (data) {
+        message.success("Se publico correctamente");
+        setModal(false)
+      }else{
+        message.error("No se pudo publicar tu Subasta");
+      }
+    } catch (error) {
+      message.error("Ohhps ocurrio un error");
+      console.log(error);
+    }
+  }
+
+  const checkPrice = (_, value) => {
+    console.log(value);
+    if (value > 0 && value < 9999) {
+      return Promise.resolve();
+    }
+    return Promise.reject("El Precio debe ser mayor que 0 ");
+  };
+  
   useEffect(() => {
     (async () => {
       let myservicedata = await fetch("http://localhost:4000", {
@@ -35,7 +67,7 @@ const Service = ({ id }) => {
                   {
                       GwtOneNotification(notificacion:"${id}"
                       ){
-
+                          _id
                           cliente{
                               nombre
                             }
@@ -46,8 +78,15 @@ const Service = ({ id }) => {
                               asientos
                               marca
                             }
+                            empieza{
+                              direccion
+                            }
+                            termina{
+                              direccion
+                            }
                             precio
                             titulo
+                            servicio
                             subasta{
                               comentario
                               precio
@@ -95,7 +134,7 @@ const Service = ({ id }) => {
   if (datas) {
     return (
       <TemplateAuth>
-       <HeaderP /> 
+        <HeaderDashboard />
         <Container>
           <Layout style={{ padding: "20px 0" }}>
             <Content style={{ padding: "0 20px" }}>
@@ -116,6 +155,11 @@ const Service = ({ id }) => {
                   <h2>{datas.titulo}</h2>
                   <h3>S/. {datas.precio}</h3>
                 </HeadD>
+                <HeadD>
+                  <span><strong>Desde: </strong>{datas.empieza.direccion}</span>
+                  <span><strong>Hasta: </strong>{datas.termina.direccion}</span>
+                
+                </HeadD>
                 <BodyD>
                   {datas.descripcion.detalles}
                   <h3>Especificaciones</h3>
@@ -131,41 +175,119 @@ const Service = ({ id }) => {
                   <Tag>
                     <strong>Asientos:</strong> {datas.descripcion.asientos}
                   </Tag>
+                  {datas.servicio == "ida"? <Tag  color="#2db7f5">
+                    <strong>Servicio:</strong> Solo Ida
+                  </Tag>:<Tag  color="#87d068">
+                    <strong>Servicio:</strong> De Ida y Vuleta
+                  </Tag> }
+                  
+                  
+
                 </BodyD>
+                <FooterD>
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={() => {
+                      setModal(true);
+                    }}
+                  >
+                    Subastar
+                  </Button>
+                </FooterD>
               </Details>
-              {
-                datas.subasta && <SubastaD>
-                <List
-                  className="comment-list"
-                  header={<h3>{datas.subasta.length} Propuestas</h3>}
-                  itemLayout="horizontal"
-                  dataSource={datas.subasta}
-                  renderItem={(item) => (
-                    <li>
-                      <Comment
-                        // actions={item.actions}
-                        author={<a href={`/perfil/${item.usuario.correo}/`}>{item.usuario.nombre+" "+ item.usuario.apellidos}</a>}
-                        avatar={"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}
-                        content={item.comentario}
-                        datetime={date.diff(item.fecha, "days") <= 1
-                        ? dayjs(item.fecha)
-                            .locale("es")
-                            .fromNow()
-                        : dayjs(item.fecha)
-                            .locale("es")
-                            .format("DD MMMM YYYY")}
-                      />
-                    </li>
-                  )}
-                />
-              </SubastaD>
-              }
+              {datas.subasta && (
+                <SubastaD>
+                  <List
+                    className="comment-list"
+                    header={<h3>{datas.subasta.length} Propuestas</h3>}
+                    itemLayout="horizontal"
+                    dataSource={datas.subasta}
+                    renderItem={(item) => (
+                      <li>
+                        <Comment
+                          // actions={item.actions}
+                          author={
+                            <a href={`/perfil/${item.usuario.correo}/`}>
+                              {item.usuario.nombre +
+                                " " +
+                                item.usuario.apellidos}
+                            </a>
+                          }
+                          avatar={
+                            "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                          }
+                          content={item.comentario}
+                          datetime={
+                            date.diff(item.fecha, "days") <= 1
+                              ? dayjs(item.fecha)
+                                  .locale("es")
+                                  .fromNow()
+                              : dayjs(item.fecha)
+                                  .locale("es")
+                                  .format("DD MMMM YYYY")
+                          }
+                        />
+                      </li>
+                    )}
+                  />
+                </SubastaD>
+              )}
             </Content>
             <Sider className="site-layout-background" width={400}>
               Sider
             </Sider>
           </Layout>
         </Container>
+        <Modal
+          visible={modal}
+          title={datas.titulo}
+        
+          footer={<></>}
+        >
+          <Form name="basic" 
+          onFinish={onFinish}
+          
+         >
+            <Form.Item
+              label="Comentario"
+              name="comentario"
+              rules={[
+                { required: true, message: "Por Favor ingrese Comentario!" }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="precio"
+              label="Precio"
+              rules={[
+                {
+                  required: true,
+                  validator: checkPrice
+                }
+              ]}
+              hasFeedback
+            >
+              <InputNumber
+                size="large"
+                defaultValue={datas.precio}
+                formatter={(value) =>
+                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+              />
+            </Form.Item>
+
+         
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Publicar Subasta
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
       </TemplateAuth>
     );
   }
@@ -182,6 +304,11 @@ Service.getInitialProps = async (ctx) => {
 export default Service;
 
 const HeaderD = styled.div``;
+
+const FooterD = styled.div`
+  padding: 20px;
+`;
+
 const HeadD = styled.div`
   padding: 20px;
   display: flex;

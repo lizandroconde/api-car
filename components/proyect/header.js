@@ -1,5 +1,6 @@
 import { Menu } from "antd"
 import { Container } from "../container"
+import { useRouter } from "next/router";
 import {
     MailOutlined,
     AppstoreOutlined,
@@ -9,6 +10,7 @@ import {
 import SubMenu from "antd/lib/menu/SubMenu";
 
 const HeaderP = () =>{
+  const router = useRouter();
     return(
         <Menu
         mode="horizontal"
@@ -20,7 +22,9 @@ const HeaderP = () =>{
         theme="dark"
         
       >
-        <Menu.Item key="dash"  icon={<AppstoreOutlined />}>
+        <Menu.Item key="dash" onClick={()=>{
+          router.push("/dashboard")
+        }}   icon={<AppstoreOutlined />}>
          Dashboard
         </Menu.Item>
         <Menu.Item key="newtravel" onClick={()=>{
